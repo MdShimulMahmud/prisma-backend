@@ -1,14 +1,56 @@
 const prisma = require("../common/prisma");
+const bcrypt = require("bcryptjs");
+const generateToken = require("../services/jwtTokenGenarate");
 // create a new user
 
 const createUser = async (req, res) => {
-  // const { name, email, password } = req.body;
-
   try {
-    const user = await prisma.user.create({
-      data: req.body,
+    const { email, name, password } = req.body;
+    const userExists = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
     });
+    if (userExists) {
+      throw new Error("User already exists");
+    }
+
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: bcrypt.hashSync(password, 10),
+      },
+    });
+
     res.status(201).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// login a user
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log(req.body);
+    const user = await prisma.user.findUniqueOrThrow({
+      where: {
+        email,
+      },
+    });
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+    const isMatch = bcrypt.compareSync(password, user.password);
+    if (!isMatch) {
+      throw new Error("Invalid Credentials");
+    }
+
+    res.status(200).json({
+      user,
+      token: generateToken(user.id),
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -68,4 +110,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  loginUser,
 };
