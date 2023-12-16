@@ -7,9 +7,11 @@ const prisma = new PrismaClient();
 const userRouter = require("./routes/userRoutes");
 const profileRouter = require("./routes/profileRoutes");
 const postRouter = require("./routes/postRoutes");
+const cookieParser = require("cookie-parser");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(cookieParser());
 
 app.use(userRouter);
 app.use(profileRouter);

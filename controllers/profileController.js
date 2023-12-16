@@ -1,4 +1,5 @@
 const prisma = require("../common/prisma");
+const cloudinary = require("../services/cloudinary");
 
 const getProfile = async (req, res) => {
   try {
@@ -23,11 +24,14 @@ const createProfile = async (req, res) => {
   }
   try {
     const path = req.file.path;
+    const result = await cloudinary.uploader.upload(path);
+    const imageUrl = result.secure_url;
+    console.log(imageUrl);
     const profile = await prisma.profile.create({
       data: {
         address,
         phone,
-        imageUrl: path,
+        imageUrl,
         user: {
           connect: {
             id: userId,

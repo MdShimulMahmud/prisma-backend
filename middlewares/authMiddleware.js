@@ -2,9 +2,8 @@ const prisma = require("../common/prisma");
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = async (req, res, next) => {
-  let token;
-  if (req?.headers?.authorization?.startsWith("Bearer")) {
-    token = req.headers.authorization.split(" ")[1];
+  const token = req.cookies.token;
+  if (token) {
     try {
       if (token) {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -19,22 +18,50 @@ const authMiddleware = async (req, res, next) => {
         next();
       }
     } catch (error) {
-      throw new Error("Not Authorized token expired, Please Login again");
+      return res
+        .status(400)
+        .json({ message: "Not Authorized token expired, Please Login again" });
     }
   } else {
-    throw new Error(" There is no token attached to header");
+    return res
+      .status(400)
+      .json({ message: "There is no token attached to header" });
   }
 };
 
-const isAdmin = async (req, res, next) => {
-  const { email } = req.user;
-  console.log(req.user);
-  const adminUser = await prisma.user.findUnique({ where: { email } });
-  if (adminUser.role !== "ADMIN" || adminUser.role !== "SELLER") {
-    throw new Error("You are not an admin or seller!");
+const verifyUser = async (req, res, next) => {
+  const { email, id } = req.user;
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+  if (!user) {
+    return res.status(400).json({ message: "User does not exist" });
   } else {
     next();
   }
 };
 
-module.exports = { authMiddleware, isAdmin };
+const verifySeller = async (req, res, next) => {
+  const { email } = req.user;
+
+  const adminUser = await prisma.user.findUnique({ where: { email } });
+  if (adminUser.role !== "SELLER") {
+    return res.status(400).json({ message: "You are not a seller!" });
+  } else {
+    next();
+  }
+};
+
+const isAdmin = async (req, res, next) => {
+  const { email } = req.user;
+
+  const adminUser = await prisma.user.findUnique({ where: { email } });
+  if (adminUser.role !== "ADMIN") {
+    return res.status(400).json({ message: "You are not an admin!" });
+  } else {
+    next();
+  }
+};
+
+module.exports = { authMiddleware, isAdmin, verifyUser, verifySeller };

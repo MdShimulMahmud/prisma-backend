@@ -1,4 +1,5 @@
 const prisma = require("../common/prisma");
+const cloudinary = require("../services/cloudinary");
 
 const getAllPosts = async (req, res) => {
   try {
@@ -47,10 +48,18 @@ const createPost = async (req, res) => {
       location,
       coordinates,
     } = req.body;
+
+    const uploadedImages = await Promise.all(
+      req.files.map(async (file) => {
+        const result = await cloudinary.uploader.upload(file.path);
+        return result.secure_url;
+      })
+    );
+
     const post = await prisma.post.create({
       data: {
         title,
-        photos: req.files.map((file) => file.path),
+        photos: { set: uploadedImages },
         price: parseInt(price),
         seatCapacity: parseInt(seatCapacity),
         type,
@@ -61,7 +70,7 @@ const createPost = async (req, res) => {
         coordinates,
         user: {
           connect: {
-            id: req.params.userId,
+            id: req.user.id,
           },
         },
       },

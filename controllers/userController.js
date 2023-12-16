@@ -17,8 +17,7 @@ const createUser = async (req, res) => {
 
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
+        ...req.body,
         password: bcrypt.hashSync(password, 10),
       },
     });
@@ -33,7 +32,7 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     const user = await prisma.user.findUniqueOrThrow({
       where: {
         email,
@@ -47,13 +46,26 @@ const loginUser = async (req, res) => {
       throw new Error("Invalid Credentials");
     }
 
-    res.status(200).json({
-      user,
-      token: generateToken(user.id),
-    });
+    const token = generateToken(user.id);
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        // secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 3,
+      })
+      .status(200)
+      .json({
+        user,
+        token,
+      });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
+};
+
+// logout a user and clear cookie
+const logoutUser = async (req, res) => {
+  res.clearCookie("token").status(200).json({ message: "Logged out" });
 };
 
 // get all users
@@ -85,9 +97,7 @@ const updateUser = async (req, res) => {
       id: id,
     },
     data: {
-      name,
-      email,
-      password,
+      ...req.body,
     },
   });
   res.status(200).json(user);
@@ -101,6 +111,7 @@ const deleteUser = async (req, res) => {
       id: id,
     },
   });
+
   res.status(200).json(user);
 };
 
@@ -111,4 +122,5 @@ module.exports = {
   updateUser,
   deleteUser,
   loginUser,
+  logoutUser,
 };
