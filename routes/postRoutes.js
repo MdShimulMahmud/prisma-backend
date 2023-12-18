@@ -32,14 +32,6 @@ router.put("/posts/:postId", authMiddleware, verifySeller, updatePost);
 router.delete("/posts/:postId", authMiddleware, verifySeller, deletePost);
 
 // for admin
-
-// router.post(
-//   "/posts",
-//   authMiddleware,
-//   isAdmin,
-//   upload.array("photos", 5),
-//   createPost
-// );
 router.put("/posts/:postId", authMiddleware, isAdmin, updatePost);
 router.delete(
   "/posts/:postId",
