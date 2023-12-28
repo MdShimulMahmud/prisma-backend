@@ -650,6 +650,10 @@
                 },
                 "password": {
                   "type": "string"
+                },
+                "role": {
+                  "type": "string",
+                  "default": "BUYER"
                 }
               },
               "required": ["email", "name", "password"]
