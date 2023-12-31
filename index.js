@@ -8,11 +8,12 @@ const userRouter = require("./routes/userRoutes");
 const profileRouter = require("./routes/profileRoutes");
 const postRouter = require("./routes/postRoutes");
 const cookieParser = require("cookie-parser");
-
+const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
