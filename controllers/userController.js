@@ -46,14 +46,13 @@ const loginUser = async (req, res) => {
       throw new Error("Invalid Credentials");
     }
 
-    const token = generateToken(user.id);
-    // res.cookie("token", token, {
-    //   maxAge: 1000 * 60 * 60 * 24 * 3,
-    // });
+    let token = generateToken(user.id);
+
     res
       .cookie("token", token, {
         httpOnly: true,
-        // secure: true,
+        secure: false,
+        // sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 * 3,
       })
       .status(200)

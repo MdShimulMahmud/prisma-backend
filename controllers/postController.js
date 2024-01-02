@@ -49,17 +49,17 @@ const createPost = async (req, res) => {
       coordinates,
     } = req.body;
 
-    const uploadedImages = await Promise.all(
-      req.files.map(async (file) => {
-        const result = await cloudinary.uploader.upload(file.path);
-        return result.secure_url;
-      })
-    );
+    // const uploadedImages = await Promise.all(
+    //   req.files.map(async (file) => {
+    //     const result = await cloudinary.uploader.upload(file.path);
+    //     return result.secure_url;
+    //   })
+    // );
 
     const post = await prisma.post.create({
       data: {
         title,
-        photos: { set: uploadedImages },
+        photos,
         price: parseInt(price),
         seatCapacity: parseInt(seatCapacity),
         type,

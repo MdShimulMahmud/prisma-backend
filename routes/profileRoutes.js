@@ -23,10 +23,10 @@ router.post(
   createProfile
 );
 router.put("/profile/:userId", authMiddleware, verifyUser, updateProfile);
-router.delete("/profile/:userId", authMiddleware, verifyUser, deleteProfile);
+router.patch("/profile/:userId", authMiddleware, verifyUser, updateProfile);
 
 /// for admin
-router.get("/profile/:userId", authMiddleware, isAdmin, getProfile);
-router.delete("/profile/:userId", authMiddleware, isAdmin, deleteProfile);
+router.get("/admin/profile/:userId", authMiddleware, isAdmin, getProfile);
+router.delete("/admin/profile/:userId", authMiddleware, isAdmin, deleteProfile);
 
 module.exports = router;

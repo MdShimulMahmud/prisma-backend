@@ -24,9 +24,15 @@ router.post("/users/login", loginUser);
 router.get("/users/logout", logoutUser);
 
 // admin routes
-router.get("/users/", authMiddleware, verifyUser, isAdmin, getAllUsers);
-router.get("/users/:id", authMiddleware, verifyUser, isAdmin, getUser);
-router.put("/users/:id", authMiddleware, verifyUser, isAdmin, updateUser);
-router.delete("/users/:id", authMiddleware, isAdmin, deleteUser);
+router.get("/admin/users/", authMiddleware, verifyUser, isAdmin, getAllUsers);
+router.get("/admin/users/:id", authMiddleware, verifyUser, isAdmin, getUser);
+router.put("/admin/users/:id", authMiddleware, verifyUser, isAdmin, updateUser);
+router.delete(
+  "/admin/users/:id",
+  authMiddleware,
+  verifyUser,
+  isAdmin,
+  deleteUser
+);
 
 module.exports = router;
