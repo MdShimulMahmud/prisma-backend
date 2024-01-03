@@ -14,19 +14,18 @@ const {
 
 const router = express.Router();
 
-router.get("/profile/:userId", authMiddleware, verifyUser, getProfile);
+router.get("/profile", authMiddleware, verifyUser, getProfile);
 router.post(
-  "/profile/:userId",
+  "/profile/create",
   authMiddleware,
   verifyUser,
-  upload.single("image"),
+  // upload.single("image"),
   createProfile
 );
-router.put("/profile/:userId", authMiddleware, verifyUser, updateProfile);
-router.patch("/profile/:userId", authMiddleware, verifyUser, updateProfile);
+router.put("/profile/edit", authMiddleware, verifyUser, updateProfile);
 
 /// for admin
-router.get("/admin/profile/:userId", authMiddleware, isAdmin, getProfile);
-router.delete("/admin/profile/:userId", authMiddleware, isAdmin, deleteProfile);
+router.get("/admin/profile", authMiddleware, isAdmin, getProfile);
+router.delete("/admin/profile/delete", authMiddleware, isAdmin, deleteProfile);
 
 module.exports = router;

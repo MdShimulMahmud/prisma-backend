@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 const userRouter = require("./routes/userRoutes");
 const profileRouter = require("./routes/profileRoutes");
 const postRouter = require("./routes/postRoutes");
+const bookRouter = require("./routes/bookRoutes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use(userRouter);
 app.use(profileRouter);
 app.use(postRouter);
+app.use(bookRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.listen(PORT, () => {

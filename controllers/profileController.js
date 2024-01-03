@@ -3,10 +3,9 @@ const cloudinary = require("../services/cloudinary");
 
 const getProfile = async (req, res) => {
   try {
-    const { userId } = req.params;
     const profile = await prisma.profile.findUnique({
       where: {
-        userId: userId,
+        userId: req.user.id,
       },
     });
     res.status(200).json(profile);
@@ -16,25 +15,24 @@ const getProfile = async (req, res) => {
 };
 
 const createProfile = async (req, res) => {
-  const { userId } = req.params;
-  const { address, phone } = req.body;
-
-  if (!req.file) {
-    res.status(400).json({ error: "Please upload a file" });
-  }
+  // if (!req.file) {
+  //   res.status(400).json({ error: "Please upload a file" });
+  // }
+  const { address, phone, image } = req.body;
   try {
-    const path = req.file.path;
-    const result = await cloudinary.uploader.upload(path);
-    const imageUrl = result.secure_url;
-    console.log(imageUrl);
+    // const path = req.file.path;
+    // const result = await cloudinary.uploader.upload(path);
+    // const imageUrl = result.secure_url;
+    // console.log(imageUrl);
+
     const profile = await prisma.profile.create({
       data: {
         address,
         phone,
-        imageUrl,
+        image,
         user: {
           connect: {
-            id: userId,
+            id: req.user.id,
           },
         },
       },
@@ -47,13 +45,12 @@ const createProfile = async (req, res) => {
 
 // update a profile
 const updateProfile = async (req, res) => {
-  const { userId } = req.params;
   const { address, phone } = req.body;
 
   try {
     const profile = await prisma.profile.update({
       where: {
-        userId: userId,
+        userId: req.user.id,
       },
       data: {
         address,
@@ -68,12 +65,10 @@ const updateProfile = async (req, res) => {
 
 // delete a profile
 const deleteProfile = async (req, res) => {
-  const { userId } = req.params;
-
   try {
     const profile = await prisma.profile.delete({
       where: {
-        userId: userId,
+        userId: req.user.id,
       },
       include: {
         user: true,
