@@ -37,6 +37,9 @@ const loginUser = async (req, res) => {
       where: {
         email,
       },
+      include: {
+        profile: true,
+      },
     });
     if (!user) {
       throw new Error("User does not exist");
@@ -56,10 +59,7 @@ const loginUser = async (req, res) => {
         maxAge: 1000 * 60 * 60 * 24 * 3,
       })
       .status(200)
-      .json({
-        user,
-        token,
-      });
+      .json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
