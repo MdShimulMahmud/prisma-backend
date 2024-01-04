@@ -21,7 +21,7 @@ const createProfile = async (req, res) => {
   // if (!req.file) {
   //   res.status(400).json({ error: "Please upload a file" });
   // }
-  const { address, phone, image } = req.body;
+  const { address, phone, images } = req.body;
   try {
     // const path = req.file.path;
     // const result = await cloudinary.uploader.upload(path);
@@ -32,7 +32,7 @@ const createProfile = async (req, res) => {
       data: {
         address,
         phone,
-        image,
+        images,
         user: {
           connect: {
             id: req.user.id,

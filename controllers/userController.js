@@ -12,7 +12,7 @@ const createUser = async (req, res) => {
       },
     });
     if (userExists) {
-      throw new Error("User already exists");
+      res.status(400).json({ error: "User already exists!" });
     }
 
     const user = await prisma.user.create({
@@ -39,6 +39,8 @@ const loginUser = async (req, res) => {
       },
       include: {
         profile: true,
+        book: true,
+        posts: true,
       },
     });
     if (!user) {
@@ -85,6 +87,8 @@ const getUser = async (req, res) => {
     },
     include: {
       profile: true,
+      book: true,
+      posts: true,
     },
   });
   res.status(200).json(user);

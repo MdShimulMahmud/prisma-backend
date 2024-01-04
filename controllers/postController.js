@@ -25,6 +25,7 @@ const getPost = async (req, res) => {
       },
       include: {
         user: true,
+        book: true,
         comments: true,
       },
     });
