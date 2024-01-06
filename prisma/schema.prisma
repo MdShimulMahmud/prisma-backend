@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -26,6 +27,7 @@ model User {
 
 model Book {
   id        String   @id @default(uuid())
+  seat      Int
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId    String

@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('BUYER', 'SELLER');
+CREATE TYPE "Role" AS ENUM ('BUYER', 'ADMIN', 'SELLER');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -15,11 +15,23 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "Book" (
+    "id" TEXT NOT NULL,
+    "seat" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
+    "postId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Book_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Post" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "photos" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    "price" BIGINT NOT NULL DEFAULT 0,
+    "price" INTEGER NOT NULL DEFAULT 0,
     "seatCapacity" INTEGER NOT NULL DEFAULT 0,
     "type" TEXT NOT NULL,
     "available" BOOLEAN NOT NULL DEFAULT true,
@@ -51,7 +63,7 @@ CREATE TABLE "Profile" (
     "id" TEXT NOT NULL,
     "address" TEXT,
     "phone" TEXT,
-    "imageUrl" TEXT DEFAULT 'https://res.cloudinary.com/dx',
+    "images" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
@@ -66,7 +78,13 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 
 -- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Book" ADD CONSTRAINT "Book_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Book" ADD CONSTRAINT "Book_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

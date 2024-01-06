@@ -31,6 +31,7 @@ const bookPost = async (req, res) => {
 
     const book = await prisma.book.create({
       data: {
+        seat: seatCapacity,
         user: { connect: { id: req.user.id } },
         post: { connect: { id: postId } },
       },
