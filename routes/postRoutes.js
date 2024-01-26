@@ -22,7 +22,7 @@ router.post(
   authMiddleware,
   verifyUser,
   verifySeller,
-  // upload.array("photos", 5),
+  upload.array("photos", 5),
   createPost
 );
 

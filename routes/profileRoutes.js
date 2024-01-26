@@ -19,7 +19,7 @@ router.post(
   "/profile/create",
   authMiddleware,
   verifyUser,
-  // upload.single("image"),
+  upload.single("image"),
   createProfile
 );
 router.put("/profile/edit", authMiddleware, verifyUser, updateProfile);
